@@ -31,13 +31,13 @@ func (h *Handler) Createusers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Role == "superadmin" || req.Role == "super_admin" {
+	if req.Role == "superadmin" {
 		http.Error(w, "You are not allowed to create a Super Admin user", http.StatusForbidden)
 		return
+	} else if req.Role == "" {
+		req.Role = "User"
 	}
-	if req.Email == "" {
-		req.Email = ""
-	}
+
 	createuser, err := h.userrepo.Create(repo.User{
 		ID:            req.ID,
 		ExternalId:    req.ExternalId,
@@ -47,13 +47,6 @@ func (h *Handler) Createusers(w http.ResponseWriter, r *http.Request) {
 		Role:          req.Role,
 		Immutable:     req.Immutable,
 	})
-
-	fmt.Println(req.Email)
-	fmt.Println(req.ExternalId)
-	fmt.Println(req.Immutable)
-	fmt.Println(req.Password_Hash)
-	fmt.Println(req.Role)
-	fmt.Println(req.Name)
 
 	if err != nil {
 
